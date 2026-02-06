@@ -1,0 +1,51 @@
+version: 2
+
+project_name: bb
+
+before:
+  hooks:
+    - go mod tidy
+    - go vet ./...
+    - go test ./...
+
+builds:
+  - id: bb
+    main: ./cmd/bb
+    binary: bb
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/ghoseb/bb/internal/build.versionFromLdflags={{.Version}}
+      - -X github.com/ghoseb/bb/internal/build.commitFromLdflags={{.Commit}}
+      - -X github.com/ghoseb/bb/internal/build.dateFromLdflags={{.Date}}
+
+archives:
+  - id: default
+    formats: [tar.gz]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^Merge"
+
+homebrew_casks:
+  - repository:
+      owner: ghoseb
+      name: bb
+    directory: Casks
+    homepage: "https://github.com/ghoseb/bb"
+    description: "Bitbucket Cloud CLI for pull requests, comments, and pipelines"

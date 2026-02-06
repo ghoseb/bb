@@ -1,0 +1,23 @@
+# Build artifacts
+/bkt
+dist/
+sbom.cdx.json
+tmp
+
+# Go
+bin/
+*.test
+*.out
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+
+# macOS
+.DS_Store
+
+.agent-mail/
+.amqrc
+.pi/
+bb
