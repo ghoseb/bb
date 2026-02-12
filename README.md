@@ -6,7 +6,7 @@ Bitbucket Cloud CLI for pull requests, comments, and pipelines. Designed for AI 
 
 ```bash
 # Homebrew (macOS & Linux)
-brew tap ghoseb/bb
+brew tap ghoseb/bbc
 brew install bbc
 
 # Go
