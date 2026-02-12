@@ -39,47 +39,47 @@ func NewCmdComment(f *cmdutil.Factory) *cobra.Command {
 Requires --repo flag to specify the repository.
 
 General comment:
-  bb review comment <pr> --repo <repo> "message"
+  bbc review comment <pr> --repo <repo> "message"
 
 Inline comment (single line):
-  bb review comment <pr> <file> <line> --repo <repo> "message"
+  bbc review comment <pr> <file> <line> --repo <repo> "message"
 
 Inline comment (line range):
-  bb review comment <pr> <file> <start> <end> --repo <repo> "message"
+  bbc review comment <pr> <file> <start> <end> --repo <repo> "message"
 
 Edit comment:
-  bb review comment <pr> --repo <repo> --edit <comment-id> "updated message"
+  bbc review comment <pr> --repo <repo> --edit <comment-id> "updated message"
 
 Delete comment:
-  bb review comment <pr> --repo <repo> --delete <comment-id>
+  bbc review comment <pr> --repo <repo> --delete <comment-id>
 
 Resolve comment:
-  bb review comment <pr> --repo <repo> --resolve <comment-id>
+  bbc review comment <pr> --repo <repo> --resolve <comment-id>
 
 Reopen comment:
-  bb review comment <pr> --repo <repo> --reopen <comment-id>
+  bbc review comment <pr> --repo <repo> --reopen <comment-id>
 
 Examples:
   # General comment
-  bb review comment 450 --repo test_repo "Looks good overall"
+  bbc review comment 450 --repo test_repo "Looks good overall"
 
   # Inline comment on single line
-  bb review comment 450 src/auth.ts 23 --repo test_repo "Fix this typo"
+  bbc review comment 450 src/auth.ts 23 --repo test_repo "Fix this typo"
 
   # Inline comment on line range
-  bb review comment 450 src/auth.ts 23 27 --repo test_repo "Refactor this block"
+  bbc review comment 450 src/auth.ts 23 27 --repo test_repo "Refactor this block"
 
   # Edit existing comment
-  bb review comment 450 --repo test_repo --edit 753222173 "Updated text"
+  bbc review comment 450 --repo test_repo --edit 753222173 "Updated text"
 
   # Delete comment
-  bb review comment 450 --repo test_repo --delete 753222173
+  bbc review comment 450 --repo test_repo --delete 753222173
 
   # Resolve comment
-  bb review comment 450 --repo test_repo --resolve 753222173
+  bbc review comment 450 --repo test_repo --resolve 753222173
 
   # Reopen comment
-  bb review comment 450 --repo test_repo --reopen 753222173`,
+  bbc review comment 450 --repo test_repo --reopen 753222173`,
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Initialize client

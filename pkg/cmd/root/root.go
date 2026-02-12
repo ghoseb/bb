@@ -16,9 +16,9 @@ import (
 // NewCmdRoot creates the root command for the bb CLI.
 func NewCmdRoot(f *cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "bb <command> <subcommand> [flags]",
+		Use:   "bbc <command> <subcommand> [flags]",
 		Short: "Bitbucket Cloud CLI for PR workflows",
-		Long: `bb is a command-line interface for Bitbucket Cloud.
+		Long: `bbc is a command-line interface for Bitbucket Cloud.
 
 It provides tools for managing pull requests, comments, and pipelines
 directly from your terminal, making code review workflows faster and
@@ -72,11 +72,11 @@ func expandedHelp(cmd *cobra.Command, _ []string) {
 		}
 		subs := child.Commands()
 		if len(subs) == 0 {
-			fmt.Fprintf(&b, "  bb %-50s  %s\n", child.Use, child.Short)
+			fmt.Fprintf(&b, "  bbc %-50s  %s\n", child.Use, child.Short)
 		} else {
 			// If the parent command itself is runnable, show it too
 			if child.RunE != nil || child.Run != nil {
-				fmt.Fprintf(&b, "  bb %-50s  %s\n", child.Name(), child.Short)
+				fmt.Fprintf(&b, "  bbc %-50s  %s\n", child.Name(), child.Short)
 			}
 			for _, sub := range subs {
 				if sub.Hidden || !sub.IsAvailableCommand() {
@@ -84,12 +84,12 @@ func expandedHelp(cmd *cobra.Command, _ []string) {
 				}
 				flags := strings.TrimRight(sub.NonInheritedFlags().FlagUsages(), "\n")
 				if flags != "" {
-					fmt.Fprintf(&b, "  bb %s %-40s  %s\n", child.Name(), sub.Use, sub.Short)
+					fmt.Fprintf(&b, "  bbc %s %-40s  %s\n", child.Name(), sub.Use, sub.Short)
 					for _, line := range strings.Split(flags, "\n") {
 						fmt.Fprintf(&b, "      %s\n", strings.TrimSpace(line))
 					}
 				} else {
-					fmt.Fprintf(&b, "  bb %s %-40s  %s\n", child.Name(), sub.Use, sub.Short)
+					fmt.Fprintf(&b, "  bbc %s %-40s  %s\n", child.Name(), sub.Use, sub.Short)
 				}
 			}
 		}

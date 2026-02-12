@@ -36,13 +36,13 @@ If --target is not specified, the repository's main branch is used.
 
 Examples:
   # Create PR to main branch
-  bb review create feat/auth --repo test_repo "Add JWT authentication"
+  bbc review create feat/auth --repo test_repo "Add JWT authentication"
 
   # Create PR to specific branch
-  bb review create feat/auth --target develop --repo test_repo "Add JWT authentication"
+  bbc review create feat/auth --target develop --repo test_repo "Add JWT authentication"
 
   # Create draft PR, close source branch after merge
-  bb review create feat/auth --draft --close-source --repo test_repo "Add JWT authentication"`,
+  bbc review create feat/auth --draft --close-source --repo test_repo "Add JWT authentication"`,
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := opts.factory.NewBBCloudClient("")

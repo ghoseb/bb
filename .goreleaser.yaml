@@ -1,6 +1,6 @@
 version: 2
 
-project_name: bb
+project_name: bbc
 
 before:
   hooks:
@@ -10,8 +10,8 @@ before:
 
 builds:
   - id: bb
-    main: ./cmd/bb
-    binary: bb
+    main: ./cmd/bbc
+    binary: bbc
     env:
       - CGO_ENABLED=0
     goos:
@@ -45,7 +45,7 @@ changelog:
 homebrew_casks:
   - repository:
       owner: ghoseb
-      name: bb
+      name: bbc
     directory: Casks
     homepage: "https://github.com/ghoseb/bb"
     description: "Bitbucket Cloud CLI for pull requests, comments, and pipelines"

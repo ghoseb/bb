@@ -35,14 +35,14 @@ Use --undo to remove your approval.
 
 Examples:
   # Approve PR
-  bb review approve 450 --repo test_repo
+  bbc review approve 450 --repo test_repo
 
   # Remove approval
-  bb review approve 450 --repo test_repo --undo
+  bbc review approve 450 --repo test_repo --undo
 
   # Approve and comment (two commands)
-  bb review approve 450 --repo test_repo
-  bb review comment 450 --repo test_repo "LGTM! Ship it."`,
+  bbc review approve 450 --repo test_repo
+  bbc review comment 450 --repo test_repo "LGTM! Ship it."`,
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Initialize client

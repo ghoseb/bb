@@ -35,8 +35,8 @@ Requires --repo flag to specify the repository.
 The comment ID can be found in the output of bb review view commands.
 
 Examples:
-  bb review reply 450 123456 --repo test_repo "Fixed in latest commit"
-  bb review reply 450 789012 --repo test_repo "Good catch, updated"`,
+  bbc review reply 450 123456 --repo test_repo "Fixed in latest commit"
+  bbc review reply 450 789012 --repo test_repo "Good catch, updated"`,
 		Args: cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Initialize client

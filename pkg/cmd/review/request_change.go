@@ -34,14 +34,14 @@ Use --undo to remove your request-change status.
 
 Examples:
   # Request changes
-  bb review request-change 450 --repo test_repo
+  bbc review request-change 450 --repo test_repo
 
   # Remove request-change
-  bb review request-change 450 --repo test_repo --undo
+  bbc review request-change 450 --repo test_repo --undo
 
   # Request changes with explanation (two commands)
-  bb review request-change 450 --repo test_repo
-  bb review comment 450 --repo test_repo "Please add tests for the new feature"`,
+  bbc review request-change 450 --repo test_repo
+  bbc review comment 450 --repo test_repo "Please add tests for the new feature"`,
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Initialize client

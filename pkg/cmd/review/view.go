@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
@@ -39,16 +40,16 @@ Without file argument: Shows PR metadata, files, build status, and review status
 With file argument: Shows file diff and inline comments.
 
 For actions, use dedicated commands:
-  bb review comment <pr> --repo <repo> "message"
-  bb review approve <pr> --repo <repo>
-  bb review request-change <pr> --repo <repo>
+  bbc review comment <pr> --repo <repo> "message"
+  bbc review approve <pr> --repo <repo>
+  bbc review request-change <pr> --repo <repo>
 
 Examples:
   # View complete PR context
-  bb review view 450 --repo test_repo
+  bbc review view 450 --repo test_repo
 
   # View specific file diff with comments
-  bb review view 450 src/auth.ts --repo test_repo`,
+  bbc review view 450 src/auth.ts --repo test_repo`,
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Initialize client
@@ -90,6 +91,7 @@ type reviewerInfo struct {
 
 type fileInfo struct {
 	Path      string `json:"path"`
+	OldPath   string `json:"old_path,omitempty"`
 	Status    string `json:"status"`
 	Additions int    `json:"additions"`
 	Deletions int    `json:"deletions"`
@@ -189,13 +191,17 @@ func runViewPR(ctx context.Context, opts *viewOptions) error {
 	totalDels := 0
 	for _, stat := range diffstat {
 		path := stat.GetPath()
-		files = append(files, fileInfo{
+		fi := fileInfo{
 			Path:      path,
 			Status:    stat.Status,
 			Additions: stat.LinesAdded,
 			Deletions: stat.LinesRemoved,
 			Comments:  commentCounts[path],
-		})
+		}
+		if stat.Status == "renamed" && stat.Old != nil {
+			fi.OldPath = stat.Old.Path
+		}
+		files = append(files, fi)
 		totalAdds += stat.LinesAdded
 		totalDels += stat.LinesRemoved
 	}
@@ -272,6 +278,39 @@ type replyInfo struct {
 	Created   string `json:"created"`
 }
 
+// extractFileDiff extracts the diff section for a renamed file from the full PR diff.
+// It looks for the "rename from/rename to" pattern and returns the hunks.
+func extractFileDiff(fullDiff, oldPath, newPath string) string {
+	lines := strings.Split(fullDiff, "\n")
+	var capturing bool
+	var result []string
+
+	for i, line := range lines {
+		if strings.HasPrefix(line, "diff --git") {
+			if capturing {
+				break // hit next file, stop
+			}
+			// Check if this is our renamed file
+			if strings.Contains(line, "a/"+oldPath) && strings.Contains(line, "b/"+newPath) {
+				capturing = true
+				continue
+			}
+		}
+		if capturing {
+			// Skip the rename metadata lines, capture from first @@ hunk
+			if strings.HasPrefix(line, "@@") || (len(result) > 0) {
+				result = append(result, line)
+			}
+			// Also stop if we somehow reach the end
+			if i == len(lines)-1 {
+				break
+			}
+		}
+	}
+
+	return strings.TrimRight(strings.Join(result, "\n"), "\n")
+}
+
 func runViewFile(ctx context.Context, opts *viewOptions) error {
 	// Fetch diff for this file
 	diff, err := opts.client.GetPRFileDiff(ctx, opts.repo, opts.prNumber, opts.file)
@@ -287,13 +326,38 @@ func runViewFile(ctx context.Context, opts *viewOptions) error {
 
 	// Find stats for this file
 	var fileStatus string
+	var oldPath string
 	var additions, deletions int
 	for _, stat := range diffstat {
 		if stat.GetPath() == opts.file {
 			fileStatus = stat.Status
 			additions = stat.LinesAdded
 			deletions = stat.LinesRemoved
+			if stat.Old != nil {
+				oldPath = stat.Old.Path
+			}
 			break
+		}
+	}
+
+	// For renames, BB's per-file diff endpoint shows the entire file as "new file"
+	// additions. Use diffstat as source of truth for whether there are real changes.
+	if fileStatus == "renamed" && oldPath != "" {
+		header := fmt.Sprintf("renamed: %s → %s\n", oldPath, opts.file)
+		if additions == 0 && deletions == 0 {
+			diff = header
+		} else {
+			// Real changes alongside rename — extract from full PR diff which has proper hunks
+			fullDiff, err := opts.client.GetPRDiff(ctx, opts.repo, opts.prNumber)
+			if err == nil {
+				if section := extractFileDiff(fullDiff, oldPath, opts.file); section != "" {
+					diff = header + "\n" + section
+				} else {
+					diff = fmt.Sprintf("%s(+%d/-%d lines changed)\n", header, additions, deletions)
+				}
+			} else {
+				diff = fmt.Sprintf("%s(+%d/-%d lines changed)\n", header, additions, deletions)
+			}
 		}
 	}
 
@@ -375,7 +439,14 @@ func renderMarkdownPRView(w io.Writer, output prViewOutput, comments []bbcloud.C
 		if f.Comments > 0 {
 			commentStr = fmt.Sprintf(", %d comments", f.Comments)
 		}
-		_, _ = fmt.Fprintf(w, "- %s (+%d/-%d%s)\n", f.Path, f.Additions, f.Deletions, commentStr)
+		switch {
+		case f.Status == "renamed" && f.OldPath != "" && f.Additions == 0 && f.Deletions == 0:
+			_, _ = fmt.Fprintf(w, "- %s ← %s (renamed%s)\n", f.Path, f.OldPath, commentStr)
+		case f.Status == "renamed" && f.OldPath != "":
+			_, _ = fmt.Fprintf(w, "- %s ← %s (renamed, +%d/-%d%s)\n", f.Path, f.OldPath, f.Additions, f.Deletions, commentStr)
+		default:
+			_, _ = fmt.Fprintf(w, "- %s (+%d/-%d%s)\n", f.Path, f.Additions, f.Deletions, commentStr)
+		}
 	}
 	
 	if output.TotalComments > 0 {

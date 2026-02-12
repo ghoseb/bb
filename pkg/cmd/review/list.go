@@ -40,13 +40,13 @@ Includes file counts, line changes, and reviewer approval status.
 
 Examples:
   # List open PRs in a repository
-  bb review list --repo test_repo
+  bbc review list --repo test_repo
 
   # List merged PRs
-  bb review list --repo test_repo --state MERGED
+  bbc review list --repo test_repo --state MERGED
 
   # List more PRs
-  bb review list --repo test_repo --limit 50`,
+  bbc review list --repo test_repo --limit 50`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := opts.factory.NewBBCloudClient("")
 			if err != nil {

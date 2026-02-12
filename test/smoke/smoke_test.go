@@ -84,7 +84,7 @@ func NewMockServer() *MockServer {
 // RunCLI runs the bb CLI command and returns stdout, stderr, and error
 func RunCLI(args ...string) (string, string, error) {
 	// Build the CLI if not already built
-	cmd := exec.Command("go", append([]string{"run", "./cmd/bb"}, args...)...)
+	cmd := exec.Command("go", append([]string{"run", "./cmd/bbc"}, args...)...)
 	
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
@@ -124,7 +124,7 @@ func TestBasicCLI(t *testing.T) {
 		t.Fatal("Expected help output, got empty string")
 	}
 
-	if !bytes.Contains([]byte(stdout), []byte("bb is a command-line interface")) {
+	if !bytes.Contains([]byte(stdout), []byte("bbc is a command-line interface")) {
 		t.Errorf("Help output missing expected content: %s", stdout)
 	}
 }

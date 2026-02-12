@@ -1,6 +1,6 @@
 GO ?= go
 BIN_DIR ?= bin
-CMD := ./cmd/bb
+CMD := ./cmd/bbc
 SOURCES := $(shell find cmd internal pkg -name '*.go')
 
 VERSION ?= $(shell \
@@ -24,11 +24,11 @@ LDFLAGS := -s -w \
 
 .PHONY: build fmt lint test tidy release snapshot clean
 
-build: $(BIN_DIR)/bb
+build: $(BIN_DIR)/bbc
 
-$(BIN_DIR)/bb: $(SOURCES) go.mod go.sum
+$(BIN_DIR)/bbc: $(SOURCES) go.mod go.sum
 	@mkdir -p $(BIN_DIR)
-	$(GO) build -trimpath -ldflags "$(LDFLAGS)" -o $(BIN_DIR)/bb $(CMD)
+	$(GO) build -trimpath -ldflags "$(LDFLAGS)" -o $(BIN_DIR)/bbc $(CMD)
 
 fmt:
 	$(GO) fmt ./...
