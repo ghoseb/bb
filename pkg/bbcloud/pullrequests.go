@@ -197,7 +197,7 @@ func (c *Client) ListPullRequests(ctx context.Context, repoSlug string, state st
 	}
 	
 	for {
-		path := fmt.Sprintf("/repositories/%s/%s/pullrequests?pagelen=%d&page=%d",
+		path := fmt.Sprintf("/repositories/%s/%s/pullrequests?pagelen=%d&page=%d&sort=-updated_on",
 			url.PathEscape(c.workspace),
 			url.PathEscape(repoSlug),
 			pageLen,
