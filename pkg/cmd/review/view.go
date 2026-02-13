@@ -417,6 +417,22 @@ func runViewFile(ctx context.Context, opts *viewOptions) error {
 	return renderMarkdownFileView(ios.Out, output)
 }
 
+// unescapeBBMarkdown reverses Bitbucket's markdown escaping for clean output.
+func unescapeBBMarkdown(s string) string {
+	r := strings.NewReplacer(
+		`\[`, `[`,
+		`\]`, `]`,
+		`\(`, `(`,
+		`\)`, `)`,
+		`\*`, `*`,
+		`\_`, `_`,
+		`\#`, `#`,
+		`\>`, `>`,
+		"\u200c", "", // zero-width non-joiner
+	)
+	return r.Replace(s)
+}
+
 func renderMarkdownPRView(w io.Writer, output prViewOutput, comments []bbcloud.Comment) error {
 	_, _ = fmt.Fprintf(w, "# PR %d: %s\n", output.ID, output.Title)
 	_, _ = fmt.Fprintf(w, "Author: %s | State: %s | Build: %s\n", output.Author, output.State, output.BuildStatus)
@@ -434,7 +450,7 @@ func renderMarkdownPRView(w io.Writer, output prViewOutput, comments []bbcloud.C
 	}
 	
 	if output.Description != "" {
-		_, _ = fmt.Fprintf(w, "\n## Description\n%s\n", output.Description)
+		_, _ = fmt.Fprintf(w, "\n## Description\n%s\n", unescapeBBMarkdown(output.Description))
 	}
 
 	_, _ = fmt.Fprintf(w, "\n## Files (%d files, +%d, -%d)\n", output.TotalFiles, output.TotalAdds, output.TotalDels)
@@ -467,13 +483,13 @@ func renderMarkdownPRView(w io.Writer, output prViewOutput, comments []bbcloud.C
 					comment.Inline.Path,
 					line,
 					comment.ID,
-					comment.Content.Raw)
+					unescapeBBMarkdown(comment.Content.Raw))
 			} else {
 				_, _ = fmt.Fprintf(w, "**%s** (id:%s, general) (comment:%d): %s\n",
 					comment.User.DisplayName,
 					comment.User.UUID,
 					comment.ID,
-					comment.Content.Raw)
+					unescapeBBMarkdown(comment.Content.Raw))
 			}
 			
 			// Render replies
@@ -484,7 +500,7 @@ func renderMarkdownPRView(w io.Writer, output prViewOutput, comments []bbcloud.C
 							reply.User.DisplayName,
 							reply.User.UUID,
 							comment.ID,
-							reply.Content.Raw)
+							unescapeBBMarkdown(reply.Content.Raw))
 					}
 				}
 			}
@@ -512,7 +528,7 @@ func renderMarkdownFileView(w io.Writer, output fileViewOutput) error {
 				comment.AuthorID,
 				lineStr,
 				comment.ID,
-				comment.Text)
+				unescapeBBMarkdown(comment.Text))
 			
 			// Render replies
 			for _, reply := range comment.Replies {
@@ -520,7 +536,7 @@ func renderMarkdownFileView(w io.Writer, output fileViewOutput) error {
 					reply.Author,
 					reply.AuthorID,
 					comment.ID,
-					reply.Text)
+					unescapeBBMarkdown(reply.Text))
 			}
 		}
 	}
