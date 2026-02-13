@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented here.
 
-## bb v0.2.0 (Circa 2026-02-07)
+## bb v0.2.0 (2026-02-13)
 
 ### Additions
 

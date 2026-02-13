@@ -1,6 +1,6 @@
 # bbc
 
-Bitbucket Cloud CLI for pull requests, comments, and pipelines. Designed for AI agent code review workflows with token-efficient output.
+Bitbucket Cloud CLI for pull requests, comments, and pipelines. Designed for AI agent code review workflows with token-efficient output. Note: the binary is named `bbc` for historical reasons (the repository is named `bb`).
 
 ## Install
 
@@ -28,7 +28,7 @@ export BB_USERNAME=myuser
 export BB_TOKEN=mytoken
 ```
 
-Create an [App Password](https://bitbucket.org/account/settings/app-passwords/) with these scopes:
+Create an App Password with these scopes:
 `read:user`, `read:workspace`, `read:repository`, `read:pullrequest`, `write:pullrequest`, `read:pipeline`
 
 ## Usage
