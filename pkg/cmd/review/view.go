@@ -421,7 +421,7 @@ func renderMarkdownPRView(w io.Writer, output prViewOutput, comments []bbcloud.C
 	_, _ = fmt.Fprintf(w, "# PR %d: %s\n", output.ID, output.Title)
 	_, _ = fmt.Fprintf(w, "Author: %s | State: %s | Build: %s\n", output.Author, output.State, output.BuildStatus)
 	_, _ = fmt.Fprintf(w, "Source: %s → %s\n", output.Source, output.Target)
-	
+
 	if len(output.Reviewers) > 0 {
 		_, _ = fmt.Fprintf(w, "Reviewers: ")
 		for i, r := range output.Reviewers {
@@ -433,6 +433,10 @@ func renderMarkdownPRView(w io.Writer, output prViewOutput, comments []bbcloud.C
 		_, _ = fmt.Fprintf(w, "\n")
 	}
 	
+	if output.Description != "" {
+		_, _ = fmt.Fprintf(w, "\n## Description\n%s\n", output.Description)
+	}
+
 	_, _ = fmt.Fprintf(w, "\n## Files (%d files, +%d, -%d)\n", output.TotalFiles, output.TotalAdds, output.TotalDels)
 	for _, f := range output.Files {
 		commentStr := ""
