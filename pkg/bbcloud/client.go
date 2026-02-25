@@ -28,10 +28,10 @@ type Options struct {
 	// BaseURL is the Bitbucket Cloud API base URL (defaults to DefaultBaseURL)
 	BaseURL string
 	
-	// Username is the Bitbucket username for authentication
-	Username string
-	
-	// Token is the Bitbucket App Password or API token
+	// Email is the Atlassian account email for authentication
+	Email string
+
+	// Token is a Bitbucket API token
 	Token string
 	
 	// Workspace is the Bitbucket workspace slug
@@ -49,8 +49,8 @@ type Options struct {
 
 // New creates a new Bitbucket Cloud API client
 func New(opts Options) (*Client, error) {
-	if opts.Username == "" {
-		return nil, fmt.Errorf("username is required")
+	if opts.Email == "" {
+		return nil, fmt.Errorf("email is required")
 	}
 	if opts.Token == "" {
 		return nil, fmt.Errorf("token is required")
@@ -83,8 +83,8 @@ func New(opts Options) (*Client, error) {
 	
 	httpClient, err := httpx.New(httpx.Options{
 		BaseURL:   baseURL,
-		Username:  opts.Username,
-		Password:  opts.Token, // Bitbucket uses Basic Auth with username:app_password
+		Email:     opts.Email,
+		Token:     opts.Token,
 		UserAgent: userAgent,
 		Timeout:   timeout,
 		Retry:     retryPolicy,

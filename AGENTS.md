@@ -218,7 +218,7 @@ client, err := opts.factory.NewBBCloudClient("")
 Then pass `client` to run functions. Never store client in opts struct without initializing.
 
 ### Credential Loading Order
-`Factory.loadCredentials()` checks env vars (`BB_WORKSPACE`, `BB_USERNAME`, `BB_TOKEN`) first, then falls back to keyring. All 3 must be set to skip keyring.
+`Factory.loadCredentials()` checks env vars (`BB_WORKSPACE`, `BB_EMAIL`, `BB_TOKEN`) first, then falls back to keyring. All 3 must be set to skip keyring.
 
 ### Auth Status Scope Detection
 `bb auth status` parses the `x-oauth-scopes` response header from `GET /user` to check granted scopes against required scopes. Uses `DoWithHeaders()` in httpx — `Do()` is a thin wrapper around it.

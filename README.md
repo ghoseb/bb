@@ -16,7 +16,7 @@ go install github.com/ghoseb/bb/cmd/bbc@latest
 ## Authentication
 
 ```bash
-# Interactive — prompts for workspace, username, app password
+# Interactive — prompts for workspace, email, and API token
 bbc auth
 
 # Check status and token scopes
@@ -24,11 +24,11 @@ bbc auth status
 
 # Environment variables (for CI / automation)
 export BB_WORKSPACE=myworkspace
-export BB_USERNAME=myuser
+export BB_EMAIL=me@example.com
 export BB_TOKEN=mytoken
 ```
 
-Create an App Password with these scopes:
+Create an API token at https://id.atlassian.com/manage-profile/security/api-tokens with these scopes:
 `read:user`, `read:workspace`, `read:repository`, `read:pullrequest`, `write:pullrequest`, `read:pipeline`
 
 ## Usage

@@ -19,8 +19,8 @@ import (
 // Client wraps HTTP access with Bitbucket-aware defaults.
 type Client struct {
 	baseURL   *url.URL
-	username  string
-	password  string
+	email     string
+	token     string
 	userAgent string
 
 	httpClient *http.Client
@@ -40,8 +40,8 @@ type Client struct {
 // Options configures a Client.
 type Options struct {
 	BaseURL   string
-	Username  string
-	Password  string
+	Email     string
+	Token     string
 	UserAgent string
 	Timeout   time.Duration
 
@@ -90,9 +90,9 @@ func New(opts Options) (*Client, error) {
 	}
 
 	client := &Client{
-		baseURL:  base,
-		username: strings.TrimSpace(opts.Username),
-		password: opts.Password,
+		baseURL: base,
+		email:   strings.TrimSpace(opts.Email),
+		token:   strings.TrimSpace(opts.Token),
 		userAgent: func() string {
 			if opts.UserAgent != "" {
 				return opts.UserAgent
@@ -204,8 +204,8 @@ func (c *Client) NewRequest(ctx context.Context, method, path string, body any) 
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", c.userAgent)
 
-	if c.username != "" || c.password != "" {
-		req.SetBasicAuth(c.username, c.password)
+	if c.token != "" {
+		req.SetBasicAuth(c.email, c.token)
 	}
 
 	return req, nil
@@ -682,8 +682,8 @@ func (c *Client) NewMultipartRequest(ctx context.Context, method, path string, f
 		return io.NopCloser(bytes.NewReader(payload)), nil
 	}
 
-	if c.username != "" || c.password != "" {
-		req.SetBasicAuth(c.username, c.password)
+	if c.token != "" {
+		req.SetBasicAuth(c.email, c.token)
 	}
 
 	return req, nil

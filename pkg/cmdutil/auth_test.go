@@ -11,7 +11,7 @@ import (
 func TestCredentialsSerialization(t *testing.T) {
 	creds := &Credentials{
 		Workspace: "test-workspace",
-		Username:  "test-user",
+		Email:     "test@example.com",
 		Token:     "test-token",
 	}
 
@@ -28,8 +28,8 @@ func TestCredentialsSerialization(t *testing.T) {
 	if decoded.Workspace != creds.Workspace {
 		t.Errorf("workspace mismatch: got %q, want %q", decoded.Workspace, creds.Workspace)
 	}
-	if decoded.Username != creds.Username {
-		t.Errorf("username mismatch: got %q, want %q", decoded.Username, creds.Username)
+	if decoded.Email != creds.Email {
+		t.Errorf("email mismatch: got %q, want %q", decoded.Email, creds.Email)
 	}
 	if decoded.Token != creds.Token {
 		t.Errorf("token mismatch: got %q, want %q", decoded.Token, creds.Token)
@@ -59,7 +59,7 @@ func TestSaveAndLoadCredentials(t *testing.T) {
 	// Save credentials
 	original := &Credentials{
 		Workspace: "my-workspace",
-		Username:  "my-user",
+		Email:     "me@example.com",
 		Token:     "my-secret-token",
 	}
 
@@ -77,8 +77,8 @@ func TestSaveAndLoadCredentials(t *testing.T) {
 	if loaded.Workspace != original.Workspace {
 		t.Errorf("workspace mismatch: got %q, want %q", loaded.Workspace, original.Workspace)
 	}
-	if loaded.Username != original.Username {
-		t.Errorf("username mismatch: got %q, want %q", loaded.Username, original.Username)
+	if loaded.Email != original.Email {
+		t.Errorf("email mismatch: got %q, want %q", loaded.Email, original.Email)
 	}
 	if loaded.Token != original.Token {
 		t.Errorf("token mismatch: got %q, want %q", loaded.Token, original.Token)

@@ -14,9 +14,9 @@ import (
 
 type loginOptions struct {
 	workspace string
-	username  string
+	email     string
 	token     string
-	
+
 	factory *cmdutil.Factory
 }
 
@@ -34,8 +34,8 @@ func NewCmdAuth(f *cmdutil.Factory) *cobra.Command {
 Credentials are validated by fetching the authenticated user info,
 then stored securely in your system keyring.
 
-The token should be a Bitbucket App Password with appropriate permissions.
-You can create one at: https://bitbucket.org/account/settings/app-passwords/
+The token should be a Bitbucket Repository or Workspace Access Token
+with appropriate permissions.
 
 To check authentication status:
   bb auth status`,
@@ -48,10 +48,10 @@ To check authentication status:
 	// Move login flags to parent command
 	cmd.Flags().StringVarP(&opts.workspace, "workspace", "w", "",
 		"Bitbucket workspace")
-	cmd.Flags().StringVarP(&opts.username, "username", "u", "",
-		"Bitbucket username")
+	cmd.Flags().StringVarP(&opts.email, "email", "e", "",
+		"Atlassian account email")
 	cmd.Flags().StringVarP(&opts.token, "token", "t", "",
-		"Bitbucket App Password")
+		"Bitbucket API token")
 
 	// Add subcommands
 	cmd.AddCommand(NewCmdStatus(f))
@@ -82,19 +82,19 @@ func runLogin(ctx context.Context, opts *loginOptions) error {
 		}
 	}
 
-	if opts.username == "" {
+	if opts.email == "" {
 		// Try environment variable fallback
-		if envUsername := os.Getenv("BB_USERNAME"); envUsername != "" {
-			opts.username = envUsername
+		if envEmail := os.Getenv("BB_EMAIL"); envEmail != "" {
+			opts.email = envEmail
 		} else {
-			username, err := prompter.Input("Bitbucket username: ")
+			email, err := prompter.Input("Atlassian account email: ")
 			if err != nil {
-				return fmt.Errorf("read username: %w", err)
+				return fmt.Errorf("read email: %w", err)
 			}
-			if username == "" {
-				return fmt.Errorf("username is required")
+			if email == "" {
+				return fmt.Errorf("email is required")
 			}
-			opts.username = username
+			opts.email = email
 		}
 	}
 
@@ -103,8 +103,8 @@ func runLogin(ctx context.Context, opts *loginOptions) error {
 		if envToken := os.Getenv("BB_TOKEN"); envToken != "" {
 			opts.token = envToken
 		} else {
-			_, _ = fmt.Fprintln(ios.ErrOut, "Tip: Create an App Password at https://bitbucket.org/account/settings/app-passwords/")
-			token, err := prompter.Password("App Password (input hidden): ")
+			_, _ = fmt.Fprintln(ios.ErrOut, "Tip: Create an API token at https://id.atlassian.com/manage-profile/security/api-tokens")
+			token, err := prompter.Password("API token (input hidden): ")
 			if err != nil {
 				return fmt.Errorf("read token: %w", err)
 			}
@@ -118,7 +118,7 @@ func runLogin(ctx context.Context, opts *loginOptions) error {
 	// Test credentials by creating a client and fetching user info
 	client, err := bbcloud.New(bbcloud.Options{
 		Workspace: opts.workspace,
-		Username:  opts.username,
+		Email:     opts.email,
 		Token:     opts.token,
 	})
 	if err != nil {
@@ -139,7 +139,7 @@ func runLogin(ctx context.Context, opts *loginOptions) error {
 	// Store credentials as a single JSON blob to avoid multiple keyring unlock prompts
 	creds := &cmdutil.Credentials{
 		Workspace: opts.workspace,
-		Username:  opts.username,
+		Email:     opts.email,
 		Token:     opts.token,
 	}
 	if err := cmdutil.SaveCredentialsToStore(store, creds); err != nil {

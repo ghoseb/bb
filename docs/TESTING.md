@@ -151,7 +151,7 @@ go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 - [ ] Set `BB_WORKSPACE=test` and run commands without --workspace
   - Should use environment variable
   
-- [ ] Set `BB_USERNAME=user` and `BB_TOKEN=token` for auth login
+- [ ] Set `BB_EMAIL=me@example.com` and `BB_TOKEN=token` for auth login
   - Should use environment variables
 
 ### Cross-Platform Tests

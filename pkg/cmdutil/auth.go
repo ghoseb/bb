@@ -13,7 +13,7 @@ import (
 // Credentials holds Bitbucket Cloud authentication credentials
 type Credentials struct {
 	Workspace string
-	Username  string
+	Email     string
 	Token     string
 }
 
@@ -66,7 +66,7 @@ func (f *Factory) NewBBCloudClient(workspaceOverride string) (*bbcloud.Client, e
 
 	client, err := bbcloud.New(bbcloud.Options{
 		Workspace: workspace,
-		Username:  creds.Username,
+		Email:     creds.Email,
 		Token:     creds.Token,
 	})
 	if err != nil {

@@ -45,16 +45,16 @@ func loadEnv(t *testing.T) {
 // getClient creates a Bitbucket Cloud client from environment variables
 func getClient(t *testing.T) *bbcloud.Client {
 	workspace := os.Getenv("BB_WORKSPACE")
-	username := os.Getenv("BB_USERNAME")
+	email := os.Getenv("BB_EMAIL")
 	token := os.Getenv("BB_TOKEN")
 
-	if workspace == "" || username == "" || token == "" {
-		t.Skip("Missing BB_WORKSPACE, BB_USERNAME, or BB_TOKEN environment variables")
+	if workspace == "" || email == "" || token == "" {
+		t.Skip("Missing BB_WORKSPACE, BB_EMAIL, or BB_TOKEN environment variables")
 	}
 
 	client, err := bbcloud.New(bbcloud.Options{
 		Workspace: workspace,
-		Username:  username,
+		Email:     email,
 		Token:     token,
 	})
 	if err != nil {

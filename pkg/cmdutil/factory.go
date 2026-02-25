@@ -62,10 +62,10 @@ func (f *Factory) GetCredentials() (*Credentials, error) {
 // This bypasses the keyring entirely — useful for development and CI.
 func loadCredentialsFromEnv() *Credentials {
 	ws := os.Getenv("BB_WORKSPACE")
-	user := os.Getenv("BB_USERNAME")
+	email := os.Getenv("BB_EMAIL")
 	token := os.Getenv("BB_TOKEN")
-	if ws != "" && user != "" && token != "" {
-		return &Credentials{Workspace: ws, Username: user, Token: token}
+	if ws != "" && email != "" && token != "" {
+		return &Credentials{Workspace: ws, Email: email, Token: token}
 	}
 	return nil
 }

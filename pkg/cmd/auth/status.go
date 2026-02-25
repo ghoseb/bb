@@ -58,7 +58,7 @@ func runStatus(ctx context.Context, opts *statusOptions) error {
 	// Verify credentials by calling API
 	client, err := bbcloud.New(bbcloud.Options{
 		Workspace: creds.Workspace,
-		Username:  creds.Username,
+		Email:     creds.Email,
 		Token:     creds.Token,
 	})
 	if err != nil {
