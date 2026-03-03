@@ -184,6 +184,28 @@ bb review reply 450 123456 --repo test_repo "Fixed in commit abc123"
 
 ---
 
+### `bb review create <source-branch> <title> [--repo REPO] [--target TARGET] [--description DESCRIPTION] [--close-source] [--draft]`
+
+**Purpose**: Create a new pull request
+
+**Example**:
+```bash
+bb review create feat/auth "Add JWT authentication" --repo test_repo --description "Adds JWT auth with refresh tokens"
+```
+
+---
+
+### `bb review update <pr-number> [--repo REPO] [--title TITLE] [--description DESCRIPTION]`
+
+**Purpose**: Update an existing pull request's title or description
+
+**Example**:
+```bash
+bb review update 450 --repo test_repo --description "Updated description with more details"
+```
+
+---
+
 ### `bb review approve <pr-number> [--repo REPO]`
 
 **Purpose**: Approve a PR

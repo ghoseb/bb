@@ -23,6 +23,7 @@ designed for efficient LLM consumption during code review workflows.`,
 	cmd.AddCommand(NewCmdComment(f))
 	cmd.AddCommand(NewCmdReply(f))
 	cmd.AddCommand(NewCmdCreate(f))
+	cmd.AddCommand(NewCmdUpdate(f))
 	cmd.AddCommand(NewCmdApprove(f))
 	cmd.AddCommand(NewCmdRequestChange(f))
 
