@@ -16,6 +16,7 @@ type createOptions struct {
 	sourceBranch      string
 	targetBranch      string
 	title             string
+	description       string
 	closeSourceBranch bool
 	draft             bool
 
@@ -37,6 +38,9 @@ If --target is not specified, the repository's main branch is used.
 Examples:
   # Create PR to main branch
   bbc review create feat/auth --repo test_repo "Add JWT authentication"
+
+  # Create PR with description
+  bbc review create feat/auth --repo test_repo "Add JWT authentication" --description "This PR adds JWT auth using the go-jwt library."
 
   # Create PR to specific branch
   bbc review create feat/auth --target develop --repo test_repo "Add JWT authentication"
@@ -63,6 +67,7 @@ Examples:
 
 	cmd.Flags().StringVarP(&opts.repo, "repo", "r", "", "Repository slug (required)")
 	cmd.Flags().StringVarP(&opts.targetBranch, "target", "t", "", "Target branch (default: repo main branch)")
+	cmd.Flags().StringVarP(&opts.description, "description", "d", "", "Pull request description")
 	cmd.Flags().BoolVar(&opts.closeSourceBranch, "close-source", false, "Close source branch after merge")
 	cmd.Flags().BoolVar(&opts.draft, "draft", false, "Create as draft pull request")
 	_ = cmd.MarkFlagRequired("repo")
@@ -73,6 +78,7 @@ Examples:
 func runCreate(ctx context.Context, opts *createOptions, client *bbcloud.Client) error {
 	pr, err := client.CreatePR(ctx, opts.repo, bbcloud.CreatePROptions{
 		Title:             opts.title,
+		Description:       opts.description,
 		SourceBranch:      opts.sourceBranch,
 		DestinationBranch: opts.targetBranch,
 		CloseSourceBranch: opts.closeSourceBranch,

@@ -41,7 +41,8 @@ bb review comment <pr> --repo <repo> --reopen <id>                # Reopen resol
 bb review reply <pr> <comment-id> --repo <repo> "message"         # Reply to comment
 
 # Review — Actions
-bb review create --repo <repo> --source <branch> [--target <branch>] --title "..." # Create PR
+bb review create --repo <repo> --source <branch> [--target <branch>] --title "..." [--description "..."] # Create PR
+bb review update <pr> --repo <repo> [--title "..."] [--description "..."] # Update PR
 bb review approve <pr> --repo <repo>                # Approve PR
 bb review approve <pr> --repo <repo> --undo         # Remove approval
 bb review request-change <pr> --repo <repo>         # Request changes

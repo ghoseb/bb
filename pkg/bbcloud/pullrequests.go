@@ -338,6 +338,7 @@ func (c *Client) UnrequestChangesPR(ctx context.Context, repoSlug string, prID i
 // CreatePROptions holds options for creating a pull request
 type CreatePROptions struct {
 	Title             string
+	Description       string
 	SourceBranch      string
 	DestinationBranch string // empty = repo mainbranch
 	CloseSourceBranch bool
@@ -361,7 +362,8 @@ func (c *Client) CreatePR(ctx context.Context, repoSlug string, opts CreatePROpt
 		url.PathEscape(repoSlug))
 
 	body := map[string]any{
-		"title": opts.Title,
+		"title":       opts.Title,
+		"description": opts.Description,
 		"source": map[string]any{
 			"branch": map[string]string{
 				"name": opts.SourceBranch,
@@ -383,6 +385,40 @@ func (c *Client) CreatePR(ctx context.Context, repoSlug string, opts CreatePROpt
 	err := c.Post(ctx, path, body, &pr)
 	if err != nil {
 		return nil, fmt.Errorf("create pull request: %w", err)
+	}
+
+	return &pr, nil
+}
+
+// UpdatePROptions holds options for updating a pull request
+type UpdatePROptions struct {
+	Title       string
+	Description string
+}
+
+// UpdatePR updates an existing pull request
+func (c *Client) UpdatePR(ctx context.Context, repoSlug string, prID int, opts UpdatePROptions) (*PullRequest, error) {
+	if err := c.validatePRArgs(repoSlug, prID); err != nil {
+		return nil, err
+	}
+
+	path := fmt.Sprintf("/repositories/%s/%s/pullrequests/%d",
+		url.PathEscape(c.workspace),
+		url.PathEscape(repoSlug),
+		prID)
+
+	body := map[string]any{}
+	if opts.Title != "" {
+		body["title"] = opts.Title
+	}
+	if opts.Description != "" {
+		body["description"] = opts.Description
+	}
+
+	var pr PullRequest
+	err := c.Put(ctx, path, body, &pr)
+	if err != nil {
+		return nil, fmt.Errorf("update pull request %d: %w", prID, err)
 	}
 
 	return &pr, nil

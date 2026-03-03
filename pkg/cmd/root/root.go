@@ -66,13 +66,32 @@ func expandedHelp(cmd *cobra.Command, _ []string) {
 	}
 	b.WriteString("\n\nUsage:\n")
 
+	// If this is a leaf command (no subcommands), show its own flags
+	if len(cmd.Commands()) == 0 {
+		fmt.Fprintf(&b, "  %s\n", cmd.UseLine())
+		flags := strings.TrimRight(cmd.NonInheritedFlags().FlagUsages(), "\n")
+		if flags != "" {
+			for _, line := range strings.Split(flags, "\n") {
+				fmt.Fprintf(&b, "      %s\n", strings.TrimSpace(line))
+			}
+		}
+		b.WriteString("\n")
+	}
+
 	for _, child := range cmd.Commands() {
 		if child.Hidden || !child.IsAvailableCommand() || skipCommands[child.Name()] {
 			continue
 		}
 		subs := child.Commands()
 		if len(subs) == 0 {
-			fmt.Fprintf(&b, "  bbc %-50s  %s\n", child.Use, child.Short)
+			// Get parent names
+			parentNames := ""
+			p := child.Parent()
+			for p != nil && p.Name() != "bbc" {
+				parentNames = p.Name() + " " + parentNames
+				p = p.Parent()
+			}
+			fmt.Fprintf(&b, "  bbc %s%-50s  %s\n", parentNames, child.Use, child.Short)
 		} else {
 			// If the parent command itself is runnable, show it too
 			if child.RunE != nil || child.Run != nil {
